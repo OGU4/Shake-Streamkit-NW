@@ -2,6 +2,8 @@ import { FormatDateOptions, useIntl } from 'react-intl'
 
 import { useAppSelector } from 'app/hooks'
 
+import type { WaveAlertLog } from '@/notification/slicers'
+
 import DialogMessages from '../messages'
 
 const opts: FormatDateOptions = Object.freeze({
@@ -31,9 +33,14 @@ const LogPage = function () {
 				: (
 					<ul>
 						{logs.map(function (log, index) {
+							let detail = `${intl.formatDate(log.timestamp, opts)}: ${log.type}`
+							if (log.type === 'wave_alert') {
+								const waveLog = log as WaveAlertLog
+								detail = `${detail} – ${waveLog.message}`
+							}
 							return (
 								<li key={index}>
-									{`${intl.formatDate(log.timestamp, opts)}: ${log.type}`}
+									{detail}
 								</li>
 							)
 						})}

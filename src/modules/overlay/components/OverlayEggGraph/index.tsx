@@ -8,7 +8,7 @@ import type { GraphRootProps } from '@/core/models/graph'
 
 import { RootState } from 'app/store'
 
-import { getCurrentTelemetry, getCurrentWaveFromTelemetry } from '../../selector'
+import { getCurrentTelemetry, getCurrentWaveFromTelemetry } from '@/overlay/selector'
 import { RightSlideAnimation } from '../SlideAnimation'
 
 const preferredGraphLayout = Object.freeze({

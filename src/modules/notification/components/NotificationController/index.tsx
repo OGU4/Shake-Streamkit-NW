@@ -1,6 +1,7 @@
 import { memo, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 
+import type { WaveAlertLog } from '@/notification/slicers'
 import type { WebSocketLog } from '@/telemetry/hooks/websocket'
 
 import { useAppSelector } from 'app/hooks'
@@ -62,6 +63,19 @@ const NotificationController = function () {
 					timestamp: log.timestamp,
 					title: intl.formatMessage(NotificationMessages.notificationWebSocketDisconnected),
 					description: wslog.url,
+				}
+				break
+			}
+			case 'wave_alert': {
+				const waveLog = log as WaveAlertLog
+				message = {
+					timestamp: log.timestamp,
+					title: intl.formatMessage(NotificationMessages.notificationWaveAlertTitle),
+					description: intl.formatMessage(NotificationMessages.notificationWaveAlertDescription, {
+						wave: waveLog.wave,
+						matchId: waveLog.matchId,
+						threshold: waveLog.threshold,
+					}),
 				}
 				break
 			}

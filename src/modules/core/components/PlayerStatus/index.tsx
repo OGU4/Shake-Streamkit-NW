@@ -2,7 +2,7 @@ import { ScaleLinear } from 'd3-scale'
 
 import { ShakeDefaultWave } from '@/telemetry/models/data'
 
-import { GraphLayoutProps } from '../../models/graph'
+import { GraphLayoutProps } from '@/core/models/graph'
 
 import PlayerStatusItem from './PlayerStatusItem'
 

@@ -17,6 +17,14 @@ const NotificationMessages = defineMessages({
 		id: 'Notification.webSocketDisconnected',
 		defaultMessage: 'Failed to Connect to WebSocket Server',
 	},
+	notificationWaveAlertTitle: {
+		id: 'Notification.waveAlertTitle',
+		defaultMessage: '20 seconds remaining',
+	},
+	notificationWaveAlertDescription: {
+		id: 'Notification.waveAlertDescription',
+		defaultMessage: 'Wave {wave} for session {matchId} dropped below {threshold}s.',
+	},
 })
 
 export default NotificationMessages

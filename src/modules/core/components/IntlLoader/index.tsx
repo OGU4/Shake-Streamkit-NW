@@ -3,7 +3,7 @@ import { IntlProvider } from 'react-intl'
 
 import { useAppSelector } from 'app/hooks'
 
-import { loadLocale } from '../../utils/language'
+import { loadLocale } from '@/core/utils/language'
 import { useEnvironment } from '../EnvironmentProvider'
 
 const IntlLoader = ({ children }: PropsWithChildren) => {

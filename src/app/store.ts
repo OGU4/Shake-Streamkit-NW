@@ -9,6 +9,7 @@ import config from '@/settings/slicers'
 import telemetry from '@/telemetry/slicers'
 
 import overlayMiddleware from '../modules/overlay/middlewares'
+import telemetryAlertsMiddleware from '../modules/telemetry/middlewares/alerts'
 
 const rootReducer = combineReducers({
 	config,
@@ -26,7 +27,7 @@ const store = configureStore({
 		serializableCheck: {
 			ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 		},
-	}).concat(overlayMiddleware as any, autoCleanupLogs),
+		}).concat(overlayMiddleware as any, telemetryAlertsMiddleware as any, autoCleanupLogs),
 })
 
 export const persistor = persistStore(store)

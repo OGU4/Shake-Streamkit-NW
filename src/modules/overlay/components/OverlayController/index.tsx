@@ -7,7 +7,7 @@ import { CheckIcon, XMarkIcon } from '@heroicons/react/16/solid'
 
 import WebSocketStatus from '@/telemetry/components/WebSocketStatus'
 
-import OverlayMessages from '../../messages'
+import OverlayMessages from '@/overlay/messages'
 import MatchSelector from '../MatchSelector'
 import WaveSelector from '../WaveSelector'
 

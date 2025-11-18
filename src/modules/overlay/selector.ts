@@ -4,7 +4,7 @@ import { WaveType } from '@/core/utils/wave'
 import type { ShakeDefaultWave, ShakeExtraWave, ShakeTelemetry } from '@/telemetry/models/data'
 import { selectTelemetries, selectTelemetryByNullableId } from '@/telemetry/selector'
 
-import type { RootState } from '../../app/store'
+import type { RootState } from '@/../app/store'
 
 export function selectMatchId(state: RootState): string | undefined {
 	return state.overlay.match

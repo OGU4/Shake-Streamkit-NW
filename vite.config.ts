@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs'
 import { env } from 'node:process'
+import { fileURLToPath, URL } from 'node:url'
 
 import react from '@vitejs/plugin-react-swc'
 import { config } from 'dotenv'
@@ -17,6 +18,12 @@ const isDevelopment = env.NODE_ENV === 'development'
 
 export default defineConfig({
 	base: '/shake-streamkit/',
+	resolve: {
+		alias: [
+			{ find: '@/voices', replacement: fileURLToPath(new URL('./src/voices', import.meta.url)) },
+			{ find: '@', replacement: fileURLToPath(new URL('./src/modules', import.meta.url)) },
+		],
+	},
 	build: {
 		target: ['esnext', 'chrome103', 'safari16'],
 		assetsDir: 'a',

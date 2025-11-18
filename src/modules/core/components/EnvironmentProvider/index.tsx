@@ -2,7 +2,7 @@ import { type PropsWithChildren, createContext, useContext } from 'react'
 
 import { detectLanguage } from '@/core/utils/language'
 
-import { type BroadcastSoftwareInfo, detectBroadcast } from '../../utils/broadcast'
+import { type BroadcastSoftwareInfo, detectBroadcast } from '@/core/utils/broadcast'
 
 interface EnvrionmentInfo {
 	broadcast?: BroadcastSoftwareInfo

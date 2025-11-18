@@ -1,5 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
+import type { DefaultWaveType } from '@/core/utils/wave'
+
 // Constant
 const MAX_LOG_ENTRIES = 63
 const LOG_EXPIRATION_HOURS = 3
@@ -9,10 +11,19 @@ export type LogType =
 	| 'test'
 	| 'websocket_connect'
 	| 'websocket_disconnect'
+	| 'wave_alert'
 
 export interface Log {
 	readonly type: LogType
 	readonly timestamp: number
+}
+
+export interface WaveAlertLog extends Log {
+	readonly type: 'wave_alert'
+	readonly matchId: string
+	readonly wave: DefaultWaveType
+	readonly threshold: number
+	readonly message: string
 }
 
 export interface LogState {
