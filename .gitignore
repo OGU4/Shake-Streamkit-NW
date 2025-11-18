@@ -17,3 +17,6 @@ npm-debug.log*
 
 # Project Files
 .dev/
+
+# VSCode settings (local only)
+.vscode/
