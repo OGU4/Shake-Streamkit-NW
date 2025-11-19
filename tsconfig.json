@@ -8,7 +8,8 @@
 			"webworker"
 		],
 		"allowJs": true,
-		"baseUrl": "src",
+		// Base URL now points at the physical Shake-Streamkit-NW directory (previously hit the `src` symlink).
+		"baseUrl": "Shake-Streamkit-NW",
 		"jsx": "react-jsx",
 		"module": "esnext",
 		"moduleResolution": "bundler",
@@ -34,12 +35,18 @@
 			"vite/client",
 			"vitest/globals"
 		],
+		// Paths still resolve relative to baseUrl, so "@/modules/*" expands to Shake-Streamkit-NW/modules/* without further changes.
 		"paths": {
 			"@/*": ["modules/*"]
 		}
 	},
+	// Vite/Vitest now operate solely on the physical Shake-Streamkit-NW tree,
+	// so TypeScript no longer needs the legacy `src` symlink entry.
 	"include": [
-		"src",
+		"Shake-Streamkit-NW",
 		"types"
-	]
+	],
+	// Before: included `src` for compatibility with the symlink.
+	// After: only the physical folder plus shared types remain; run `npm start` and `npm test` to confirm type checking and resolution behave.
+	// baseUrl before/after: src -> Shake-Streamkit-NW (unchanged here, but now fully aligned with include entries).
 }

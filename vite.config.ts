@@ -19,9 +19,10 @@ const isDevelopment = env.NODE_ENV === 'development'
 export default defineConfig({
 	base: '/shake-streamkit/',
 	resolve: {
+		// Physical sources now live under Shake-Streamkit-NW (src remains as a transitional symlink).
 		alias: [
-			{ find: '@/voices', replacement: fileURLToPath(new URL('./src/voices', import.meta.url)) },
-			{ find: '@', replacement: fileURLToPath(new URL('./src/modules', import.meta.url)) },
+			{ find: '@/voices', replacement: fileURLToPath(new URL('./Shake-Streamkit-NW/voices', import.meta.url)) },
+			{ find: '@', replacement: fileURLToPath(new URL('./Shake-Streamkit-NW/modules', import.meta.url)) },
 		],
 	},
 	build: {
@@ -42,6 +43,7 @@ export default defineConfig({
 		'import.meta.env.APP_VERSION': JSON.stringify(packageJson.version),
 	},
 	plugins: [
+		// tsconfig baseUrl is already Shake-Streamkit-NW, so tsconfigPaths stays in sync with the aliased physical paths above.
 		tsconfigPaths(),
 		react({
 			devTarget: 'esnext',
@@ -67,9 +69,15 @@ export default defineConfig({
 	test: {
 		environment: 'jsdom',
 		globals: true,
-		include: ['src/**/*.test.[jt]s?(x)'],
+		// Vitest now only targets the physical Shake-Streamkit-NW tree (drop the old src symlink glob to avoid duplicate runs).
+		include: ['Shake-Streamkit-NW/**/*.test.[jt]s?(x)'],
 		setupFiles: [
-			'src/setupTests.ts',
+			// Setup files also point solely at the physical directory; src is just a temporary symlink.
+			'Shake-Streamkit-NW/setupTests.ts',
 		],
 	},
 })
+
+// alias before/after: ./src/* -> ./Shake-Streamkit-NW/*
+// Vitest include/setupFiles now only reference Shake-Streamkit-NW to prevent symlink duplicates.
+// Verification: run `npm start` and `npm test`—tests should report under Shake-Streamkit-NW paths only.

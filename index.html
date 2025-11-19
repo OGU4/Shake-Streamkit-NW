@@ -21,6 +21,8 @@
 	<body>
 		<noscript>You need to enable JavaScript to run this app.</noscript>
 		<div id="r"></div>
-		<script type="module" src="/src/index.tsx"></script>
+		<!-- Physical sources live under /Shake-Streamkit-NW (src remains as a symlink during the transition). -->
+		<script type="module" src="/Shake-Streamkit-NW/index.tsx"></script>
+		<!-- Entry src before/after: /src/index.tsx -> /Shake-Streamkit-NW/index.tsx. Verify via `npm start`. -->
 	</body>
 </html>
