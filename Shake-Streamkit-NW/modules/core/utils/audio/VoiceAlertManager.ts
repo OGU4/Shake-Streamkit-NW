@@ -1,7 +1,7 @@
 // Voice alert playback helper for Redux middleware and services (e.g., telemetry alerts middleware).
 // Currently supports only the "wave_20sec" alert mapped to a pre-generated Zunda voice.
 // No React dependency; safe no-op in non-browser environments.
-import wave20sec from '@/voices/zunda/wave_20sec.mp3'
+import wave20sec from '@/voices/zunda/wave_20sec.wav'
 
 type AlertId = 'wave_20sec'
 

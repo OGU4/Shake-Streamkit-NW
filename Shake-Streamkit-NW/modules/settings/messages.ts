@@ -55,6 +55,10 @@ const DialogMessages = defineMessages({
 		id: 'Dialog.advanced.playerStatus',
 		defaultMessage: 'Show Player Status',
 	},
+	advancedLastSpawnAlert: {
+		id: 'Dialog.advanced.lastSpawnAlert',
+		defaultMessage: 'ラス湧き報告',
+	},
 
 	dataSource: {
 		id: 'Dialog.dataSource',

@@ -12,6 +12,7 @@ interface ConfigState {
 	notifyOnQuotaMetDuration?: number
 	notifyOnWaveFinished?: boolean
 	notifyOnWaveFinishedDuration?: number
+	lastSpawnAlertEnabled?: boolean
 	reduced?: boolean
 	server?: string
 	simulation?: boolean
@@ -51,6 +52,9 @@ const configSlice = createSlice({
 		setNotifyOnWaveFinishedDuration(state, action: PayloadAction<number | undefined>) {
 			state.notifyOnWaveFinishedDuration = action.payload
 		},
+		setLastSpawnAlertEnabled(state, action: PayloadAction<boolean | undefined>) {
+			state.lastSpawnAlertEnabled = action.payload
+		},
 		setReduced(state, action: PayloadAction<boolean | undefined>) {
 			state.reduced = action.payload
 		},
@@ -87,14 +91,15 @@ export const {
 	setColorLock,
 	setCameraId,
 	setLanguage,
-	setNotifyOnQuotaMet,
-	setNotifyOnQuotaMetDuration,
-	setNotifyOnWaveFinished,
-	setNotifyOnWaveFinishedDuration,
-	setReduced,
-	setServer,
-	setSimulation,
-	setSpeed,
-	setStatus,
+		setNotifyOnQuotaMet,
+		setNotifyOnQuotaMetDuration,
+		setNotifyOnWaveFinished,
+		setNotifyOnWaveFinishedDuration,
+		setLastSpawnAlertEnabled,
+		setReduced,
+		setServer,
+		setSimulation,
+		setSpeed,
+		setStatus,
 } = configSlice.actions
 export default persistConfigReducer

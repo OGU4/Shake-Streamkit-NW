@@ -8,7 +8,7 @@ import { addTelemetry } from '@/telemetry/slicers'
 
 import type { RootState } from 'app/store'
 
-const THRESHOLD_IN_SECONDS = 20
+const THRESHOLD_IN_SECONDS = 27
 
 type FiredWaveMap = Map<DefaultWaveType, Set<number>>
 const firedAlerts = new Map<string, FiredWaveMap>()
@@ -43,6 +43,11 @@ const telemetryAlertsMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) =>
 	}
 
 	const state = store.getState()
+	const lastSpawnAlertEnabled = state.config.lastSpawnAlertEnabled
+	if (lastSpawnAlertEnabled === false) {
+		return result
+	}
+
 	const matchId = state.overlay.match
 	if (!matchId) {
 		return result

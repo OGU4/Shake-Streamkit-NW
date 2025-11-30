@@ -1,6 +1,8 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import { WaveType } from '@/core/utils/wave'
+import type { OomonSpawnAlertEvent } from '@/modules/overlay/models/oomon'
+import type { OomonSpawnSchedule } from '@/telemetry/utils/oomonIntervals'
 
 // State
 interface OverlayState {
@@ -8,10 +10,17 @@ interface OverlayState {
 	match?: string
 	server?: string
 	wave?: WaveType
+	oomonScheduleEnabled: boolean
+	oomonSchedule?: OomonSpawnSchedule
+	oomonNextSpawnIndex: number
+	oomonAlerts: OomonSpawnAlertEvent[]
 }
 
 const initialState: OverlayState = {
 	poweredby: false,
+	oomonScheduleEnabled: true,
+	oomonNextSpawnIndex: 0,
+	oomonAlerts: [],
 }
 
 // Create thunk
@@ -55,6 +64,9 @@ const overlaySlice = createSlice({
 				clearTimer()
 				delete state.wave
 			}
+			state.oomonSchedule = undefined
+			state.oomonNextSpawnIndex = 0
+			state.oomonAlerts = []
 			state.match = action.payload
 		},
 		setServer(state, action: PayloadAction<string | undefined>) {
@@ -69,6 +81,19 @@ const overlaySlice = createSlice({
 					delete state.wave
 				}
 			}
+		},
+		setOomonSchedule(state, action: PayloadAction<OomonSpawnSchedule | undefined>) {
+			state.oomonSchedule = action.payload
+			state.oomonNextSpawnIndex = 0
+		},
+		setOomonScheduleEnabled(state, action: PayloadAction<boolean>) {
+			state.oomonScheduleEnabled = action.payload
+		},
+		setOomonNextSpawnIndex(state, action: PayloadAction<number>) {
+			state.oomonNextSpawnIndex = action.payload
+		},
+		addOomonAlert(state, action: PayloadAction<OomonSpawnAlertEvent>) {
+			state.oomonAlerts.push(action.payload)
 		},
 	},
 	extraReducers: builder => {
@@ -89,5 +114,9 @@ export const {
 	setMatch,
 	showEggGraph,
 	setServer,
+	setOomonSchedule,
+	setOomonScheduleEnabled,
+	setOomonNextSpawnIndex,
+	addOomonAlert,
 } = overlaySlice.actions
 export default overlaySlice.reducer

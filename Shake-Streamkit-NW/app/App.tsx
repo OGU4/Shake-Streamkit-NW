@@ -5,6 +5,7 @@ import NotificationController from '@/notification/components/NotificationContro
 import OverlayController from '@/overlay/components/OverlayController'
 import OverlayHost from '@/overlay/components/OverlayHost'
 import SettingsWindow from '@/settings'
+import IgnoreCurrentMatchBanner from '@/telemetry/components/IgnoreCurrentMatchBanner'
 
 const App = () => {
 	useBodyClass()
@@ -16,6 +17,7 @@ const App = () => {
 			<NotificationController />
 
 			<div className='App-ui'>
+				<IgnoreCurrentMatchBanner />
 				<SettingsWindow />
 				<OverlayController />
 			</div>

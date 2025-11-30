@@ -2,6 +2,7 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import { WaveType } from '@/core/utils/wave'
 import type { ShakeDefaultWave, ShakeExtraWave, ShakeTelemetry } from '@/telemetry/models/data'
+import type { OomonSpawnSchedule } from '@/telemetry/utils/oomonIntervals'
 import { selectTelemetries, selectTelemetryByNullableId } from '@/telemetry/selector'
 
 import type { RootState } from '@/../app/store'
@@ -12,6 +13,19 @@ export function selectMatchId(state: RootState): string | undefined {
 
 export function selectWave(state: RootState): WaveType | undefined {
 	return state.overlay.wave
+}
+
+export function getOomonScheduleEnabled(state: RootState): boolean {
+	return state.overlay.oomonScheduleEnabled
+}
+
+export function getOomonSchedule(state: RootState): OomonSpawnSchedule | undefined {
+	return state.overlay.oomonSchedule
+}
+
+export function hasOomonSchedule(state: RootState): boolean {
+	const overlay = state.overlay
+	return overlay.oomonScheduleEnabled === true && overlay.oomonSchedule != null
 }
 
 export function selectTelemetry(_: unknown, telemetry: Readonly<ShakeTelemetry> | undefined): Readonly<ShakeTelemetry> | undefined {

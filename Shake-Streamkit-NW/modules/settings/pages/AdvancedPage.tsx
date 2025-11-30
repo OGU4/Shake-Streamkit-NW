@@ -11,6 +11,7 @@ import { useAppSelector } from 'app/hooks'
 import DialogMessages from '../messages'
 import {
 	setColorLock,
+	setLastSpawnAlertEnabled,
 	setNotifyOnQuotaMetDuration,
 	setNotifyOnWaveFinishedDuration,
 	setReduced,
@@ -36,6 +37,10 @@ const AdvancedPage = function () {
 
 	const colorLocked = useAppSelector(state => state.config.colorLock) ?? false
 	const playerStatusEnabled = useAppSelector(state => state.config.status) ?? false
+	let lastSpawnAlertEnabled = useAppSelector(state => state.config.lastSpawnAlertEnabled)
+	if (lastSpawnAlertEnabled === undefined) {
+		lastSpawnAlertEnabled = true
+	}
 
 	const dispatch = useDispatch()
 	const handleNotifyOnQuotaMetDuration = useCallback(function (notifyOnQuotaMetDuration: number) {
@@ -49,6 +54,9 @@ const AdvancedPage = function () {
 	}, [dispatch])
 	const handleColorLock = useCallback(function (colorLocked: boolean) {
 		dispatch(setColorLock(colorLocked))
+	}, [dispatch])
+	const handleLastSpawnAlert = useCallback(function (enabled: boolean) {
+		dispatch(setLastSpawnAlertEnabled(enabled))
 	}, [dispatch])
 	const handlePlayerStatus = useCallback(function (playerStatusEnabled: boolean) {
 		dispatch(setStatus(playerStatusEnabled))
@@ -114,6 +122,13 @@ const AdvancedPage = function () {
 					onCheckedChange={handleColorLock}
 				>
 					{intl.formatMessage(DialogMessages.advancedColorLock)}
+				</CheckBox>
+				<CheckBox
+					id='lastspawnalert'
+					checked={lastSpawnAlertEnabled}
+					onCheckedChange={handleLastSpawnAlert}
+				>
+					{intl.formatMessage(DialogMessages.advancedLastSpawnAlert)}
 				</CheckBox>
 			</section>
 		</>
