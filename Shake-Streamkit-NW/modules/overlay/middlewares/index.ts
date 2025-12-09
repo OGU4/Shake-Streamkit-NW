@@ -1,8 +1,9 @@
 import { Dispatch, MiddlewareAPI, UnknownAction } from 'redux'
 
 import { forceLast } from '@/core/utils/collection'
+import VoiceAlertManager from '@/core/utils/audio/VoiceAlertManager'
 import { addOomonAlert, hideEggGraphDelayed, setOomonNextSpawnIndex, setOomonSchedule, showEggGraph, showPoweredby } from '@/overlay/slicers'
-import { getCurrentTelemetry, getCurrentWaveFromTelemetry } from '@/overlay/selector'
+import { getCurrentTelemetry } from '@/overlay/selector'
 import type { ShakeDefaultWave } from '@/telemetry/models/data'
 import { addTelemetry } from '@/telemetry/slicers'
 import { getOomonSpawnScheduleForWave } from '@/telemetry/utils/oomonIntervals'
@@ -11,10 +12,12 @@ import type { ShakeGameUpdateEvent } from '@/telemetry/models/telemetry'
 import type { RootState } from 'app/store'
 
 const DEBUG_OOMON_ALERT = false
+let lastWaveForOomonIndexReset: number | null = null
 
 const overlay = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) => (action: UnknownAction) => {
 	const result = next(action)
 	const state = store.getState()
+	const oomonAlertEnabled = state.config.oomonAlertEnabled ?? false
 
 	// Return when match is not selected
 	const matchId = state.overlay.match
@@ -110,7 +113,38 @@ const overlay = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) 
 
 	if (inAddTelemetry) {
 		const telemetry = getCurrentTelemetry(state)
-		const currentWave = getCurrentWaveFromTelemetry(state, telemetry)
+		if (!telemetry) {
+			if (DEBUG_OOMON_ALERT) {
+				console.log('[oomon-alert] guard A: telemetry is undefined', {
+					wave: undefined,
+					quota: undefined,
+					remaining: action.payload.count,
+					oomonScheduleEnabled: state.overlay.oomonScheduleEnabled,
+					spawnTimesLength: state.overlay.oomonSchedule?.spawnTimesRemaining.length,
+					oomonNextSpawnIndex: state.overlay.oomonNextSpawnIndex,
+					spawnTime: state.overlay.oomonSchedule?.spawnTimesRemaining[state.overlay.oomonNextSpawnIndex],
+				})
+			}
+			return result
+		}
+
+		const latestWaveKey = telemetry.waveKeys.findLast(waveKey => waveKey !== 'extra')
+		if (!latestWaveKey) {
+			if (DEBUG_OOMON_ALERT) {
+				console.log('[oomon-alert] guard A: latestWaveKey is undefined', {
+					wave: undefined,
+					quota: undefined,
+					remaining: action.payload.count,
+					oomonScheduleEnabled: state.overlay.oomonScheduleEnabled,
+					spawnTimesLength: state.overlay.oomonSchedule?.spawnTimesRemaining.length,
+					oomonNextSpawnIndex: state.overlay.oomonNextSpawnIndex,
+					spawnTime: state.overlay.oomonSchedule?.spawnTimesRemaining[state.overlay.oomonNextSpawnIndex],
+				})
+			}
+			return result
+		}
+
+		const currentWave = telemetry.waves[latestWaveKey] as ShakeDefaultWave | undefined
 		if (!currentWave) {
 			if (DEBUG_OOMON_ALERT) {
 				console.log('[oomon-alert] guard A: currentWave is undefined', {
@@ -176,6 +210,14 @@ const overlay = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) 
 			return result
 		}
 
+		if (typeof currentWave.wave === 'number') {
+			const waveNumber = currentWave.wave
+			if (lastWaveForOomonIndexReset !== null && waveNumber > lastWaveForOomonIndexReset) {
+				store.dispatch(setOomonNextSpawnIndex(0))
+			}
+			lastWaveForOomonIndexReset = waveNumber
+		}
+
 		if (oomonNextSpawnIndex >= oomonSchedule.spawnTimesRemaining.length) {
 			if (DEBUG_OOMON_ALERT) {
 				console.log('[oomon-alert] guard E: oomonNextSpawnIndex is out of range', {
@@ -225,9 +267,9 @@ const overlay = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) 
 		const alertTime = spawn + 4
 
 		if (DEBUG_OOMON_ALERT) {
-			console.log('[oomon-alert] check alert', {
+			console.log('[oomon] tick', {
 				wave: currentWave.wave,
-				quota: (currentWave as any).quota,
+				quota: currentWave.quota,
 				remaining,
 				oomonNextSpawnIndex,
 				spawnTime: spawnTimesRemaining?.[oomonNextSpawnIndex],
@@ -237,6 +279,15 @@ const overlay = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) 
 		}
 
 		if (alertTime > 100) {
+			if (DEBUG_OOMON_ALERT) {
+				console.log('[oomon] skip (>100)', {
+					wave: currentWave.wave,
+					remaining,
+					index: oomonNextSpawnIndex,
+					spawn,
+					alertTime,
+				})
+			}
 			store.dispatch(setOomonNextSpawnIndex(oomonNextSpawnIndex + 1))
 			return result
 		}
@@ -245,6 +296,20 @@ const overlay = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) 
 			const nextSpawnRemaining = oomonSchedule.spawnTimesRemaining[oomonNextSpawnIndex + 1] ?? null
 			const isLast = nextSpawnRemaining === null
 
+			if (DEBUG_OOMON_ALERT) {
+				console.log('[oomon] TRIGGER', {
+					wave: currentWave.wave,
+					remaining,
+					index: oomonNextSpawnIndex,
+					spawn,
+					alertTime,
+					nextSpawnRemaining,
+					isLast,
+				})
+			}
+			if (oomonAlertEnabled) {
+				VoiceAlertManager.play('oomon_spawn')
+			}
 			store.dispatch(addOomonAlert({
 				alertRemaining: remaining,
 				spawnRemaining: spawn,

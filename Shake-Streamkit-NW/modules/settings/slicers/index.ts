@@ -13,6 +13,8 @@ interface ConfigState {
 	notifyOnWaveFinished?: boolean
 	notifyOnWaveFinishedDuration?: number
 	lastSpawnAlertEnabled?: boolean
+	oomonAlertEnabled?: boolean
+	joeAlertEnabled?: boolean
 	reduced?: boolean
 	server?: string
 	simulation?: boolean
@@ -21,6 +23,8 @@ interface ConfigState {
 }
 
 const initialState: ConfigState = {
+	joeAlertEnabled: false,
+	oomonAlertEnabled: false,
 }
 
 // Slice
@@ -54,6 +58,12 @@ const configSlice = createSlice({
 		},
 		setLastSpawnAlertEnabled(state, action: PayloadAction<boolean | undefined>) {
 			state.lastSpawnAlertEnabled = action.payload
+		},
+		setOomonAlertEnabled(state, action: PayloadAction<boolean | undefined>) {
+			state.oomonAlertEnabled = action.payload
+		},
+		setJoeAlertEnabled(state, action: PayloadAction<boolean | undefined>) {
+			state.joeAlertEnabled = action.payload
 		},
 		setReduced(state, action: PayloadAction<boolean | undefined>) {
 			state.reduced = action.payload
@@ -96,6 +106,8 @@ export const {
 		setNotifyOnWaveFinished,
 		setNotifyOnWaveFinishedDuration,
 		setLastSpawnAlertEnabled,
+	setOomonAlertEnabled,
+		setJoeAlertEnabled,
 		setReduced,
 		setServer,
 		setSimulation,

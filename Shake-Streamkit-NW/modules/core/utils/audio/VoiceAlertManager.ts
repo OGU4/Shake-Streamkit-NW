@@ -1,12 +1,16 @@
 // Voice alert playback helper for Redux middleware and services (e.g., telemetry alerts middleware).
-// Currently supports only the "wave_20sec" alert mapped to a pre-generated Zunda voice.
+// Currently supports only the "wave_20sec" and "joe_alert_countdown" alerts mapped to pre-generated Zunda voices.
 // No React dependency; safe no-op in non-browser environments.
 import wave20sec from '@/voices/zunda/wave_20sec.wav'
+import joeAlertCountdown from '@/voices/zunda/joe_alert_countdown.wav'
+import oomonSpawn from '@/voices/countdown_3210.wav'
 
-type AlertId = 'wave_20sec'
+type AlertId = 'wave_20sec' | 'joe_alert_countdown' | 'oomon_spawn'
 
 const alertSources: Record<AlertId, string> = {
 	wave_20sec: wave20sec,
+	joe_alert_countdown: joeAlertCountdown,
+	oomon_spawn: oomonSpawn,
 }
 
 const activePlayers = new Map<AlertId, HTMLAudioElement>()

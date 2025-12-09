@@ -51,6 +51,10 @@ const DialogMessages = defineMessages({
 		id: 'Dialog.advanced.colorLock',
 		defaultMessage: 'Color Lock',
 	},
+	advancedOomonAlert: {
+		id: 'Dialog.advanced.oomonAlert',
+		defaultMessage: 'オオモノ湧きアラート',
+	},
 	advancedPlayerStatus: {
 		id: 'Dialog.advanced.playerStatus',
 		defaultMessage: 'Show Player Status',
@@ -58,6 +62,10 @@ const DialogMessages = defineMessages({
 	advancedLastSpawnAlert: {
 		id: 'Dialog.advanced.lastSpawnAlert',
 		defaultMessage: 'ラス湧き報告',
+	},
+	advancedJoeAlert: {
+		id: 'Dialog.advanced.joeAlert',
+		defaultMessage: 'ジョー警報',
 	},
 
 	dataSource: {

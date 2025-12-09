@@ -13,6 +13,8 @@ const THRESHOLD_IN_SECONDS = 27
 type FiredWaveMap = Map<DefaultWaveType, Set<number>>
 const firedAlerts = new Map<string, FiredWaveMap>()
 
+const joeFiredAlerts = new Map<string, Set<number>>()
+
 const hasFired = (matchId: string, wave: DefaultWaveType, threshold: number): boolean => {
 	const waveMap = firedAlerts.get(matchId)
 	if (!waveMap) {
@@ -36,6 +38,23 @@ const markFired = (matchId: string, wave: DefaultWaveType, threshold: number): v
 	thresholds.add(threshold)
 }
 
+const hasFiredJoe = (matchId: string, threshold: number): boolean => {
+	const thresholds = joeFiredAlerts.get(matchId)
+	if (!thresholds) {
+		return false
+	}
+	return thresholds.has(threshold)
+}
+
+const markFiredJoe = (matchId: string, threshold: number): void => {
+	let thresholds = joeFiredAlerts.get(matchId)
+	if (!thresholds) {
+		thresholds = new Set()
+		joeFiredAlerts.set(matchId, thresholds)
+	}
+	thresholds.add(threshold)
+}
+
 const telemetryAlertsMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) => (action: UnknownAction) => {
 	const result = next(action)
 	if (!addTelemetry.match(action)) {
@@ -43,6 +62,24 @@ const telemetryAlertsMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) =>
 	}
 
 	const state = store.getState()
+
+	// Extra wave Joe alert countdown
+	if (state.config.joeAlertEnabled === true) {
+		const ev = action.payload as any
+		if (ev.event === 'game_update' && ev.wave === 'extra') {
+			const matchId = state.overlay.match
+			if (matchId) {
+				const count = ev.count
+				if (typeof count === 'number' && count >= 20 && count <= 100 && count % 10 === 0) {
+					if (!hasFiredJoe(matchId, count)) {
+						markFiredJoe(matchId, count)
+						VoiceAlertManager.play('joe_alert_countdown')
+					}
+				}
+			}
+		}
+	}
+
 	const lastSpawnAlertEnabled = state.config.lastSpawnAlertEnabled
 	if (lastSpawnAlertEnabled === false) {
 		return result

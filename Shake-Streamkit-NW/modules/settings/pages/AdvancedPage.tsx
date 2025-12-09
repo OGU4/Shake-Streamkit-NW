@@ -11,9 +11,11 @@ import { useAppSelector } from 'app/hooks'
 import DialogMessages from '../messages'
 import {
 	setColorLock,
+	setJoeAlertEnabled,
 	setLastSpawnAlertEnabled,
 	setNotifyOnQuotaMetDuration,
 	setNotifyOnWaveFinishedDuration,
+	setOomonAlertEnabled,
 	setReduced,
 	setStatus,
 } from '../slicers'
@@ -41,6 +43,14 @@ const AdvancedPage = function () {
 	if (lastSpawnAlertEnabled === undefined) {
 		lastSpawnAlertEnabled = true
 	}
+	let oomonAlertEnabled = useAppSelector(state => state.config.oomonAlertEnabled)
+	if (oomonAlertEnabled === undefined) {
+		oomonAlertEnabled = false
+	}
+	let joeAlertEnabled = useAppSelector(state => state.config.joeAlertEnabled)
+	if (joeAlertEnabled === undefined) {
+		joeAlertEnabled = false
+	}
 
 	const dispatch = useDispatch()
 	const handleNotifyOnQuotaMetDuration = useCallback(function (notifyOnQuotaMetDuration: number) {
@@ -57,6 +67,12 @@ const AdvancedPage = function () {
 	}, [dispatch])
 	const handleLastSpawnAlert = useCallback(function (enabled: boolean) {
 		dispatch(setLastSpawnAlertEnabled(enabled))
+	}, [dispatch])
+	const handleOomonAlert = useCallback(function (enabled: boolean) {
+		dispatch(setOomonAlertEnabled(enabled))
+	}, [dispatch])
+	const handleJoeAlert = useCallback(function (enabled: boolean) {
+		dispatch(setJoeAlertEnabled(enabled))
 	}, [dispatch])
 	const handlePlayerStatus = useCallback(function (playerStatusEnabled: boolean) {
 		dispatch(setStatus(playerStatusEnabled))
@@ -124,15 +140,29 @@ const AdvancedPage = function () {
 					{intl.formatMessage(DialogMessages.advancedColorLock)}
 				</CheckBox>
 				<CheckBox
+					id='oomonalert'
+					checked={oomonAlertEnabled}
+					onCheckedChange={handleOomonAlert}
+				>
+					{intl.formatMessage(DialogMessages.advancedOomonAlert)}
+				</CheckBox>
+				<CheckBox
 					id='lastspawnalert'
 					checked={lastSpawnAlertEnabled}
 					onCheckedChange={handleLastSpawnAlert}
-				>
-					{intl.formatMessage(DialogMessages.advancedLastSpawnAlert)}
-				</CheckBox>
-			</section>
-		</>
-	)
-}
+					>
+						{intl.formatMessage(DialogMessages.advancedLastSpawnAlert)}
+					</CheckBox>
+					<CheckBox
+						id='joealert'
+						checked={joeAlertEnabled}
+						onCheckedChange={handleJoeAlert}
+					>
+						{intl.formatMessage(DialogMessages.advancedJoeAlert)}
+					</CheckBox>
+				</section>
+			</>
+		)
+	}
 
 export default AdvancedPage
