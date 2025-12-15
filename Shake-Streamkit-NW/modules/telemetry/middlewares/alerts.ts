@@ -7,13 +7,29 @@ import type { ShakeDefaultWave } from '@/telemetry/models/data'
 import { addTelemetry } from '@/telemetry/slicers'
 
 import type { RootState } from 'app/store'
+import type { AlertId } from '@/core/utils/audio/VoiceAlertManager'
 
 const THRESHOLD_IN_SECONDS = 27
+const extraPlayers = 4
 
 type FiredWaveMap = Map<DefaultWaveType, Set<number>>
 const firedAlerts = new Map<string, FiredWaveMap>()
+const firedMatchmaking = new Map<string, boolean>()
 
-const joeFiredAlerts = new Map<string, Set<number>>()
+type JoeAlertState = {
+	firedCountdowns: Set<number>
+	firedTargetSwitches: Set<number>
+	nextTargetIndex: number
+}
+
+const joeAlertStates = new Map<string, JoeAlertState>()
+
+const NEXT_TARGET_ALERTS: Record<number, AlertId> = {
+	1: 'joe_nxt1st',
+	2: 'joe_nxt2nd',
+	3: 'joe_nxt3rd',
+	4: 'joe_nxt4th',
+}
 
 const hasFired = (matchId: string, wave: DefaultWaveType, threshold: number): boolean => {
 	const waveMap = firedAlerts.get(matchId)
@@ -38,21 +54,17 @@ const markFired = (matchId: string, wave: DefaultWaveType, threshold: number): v
 	thresholds.add(threshold)
 }
 
-const hasFiredJoe = (matchId: string, threshold: number): boolean => {
-	const thresholds = joeFiredAlerts.get(matchId)
-	if (!thresholds) {
-		return false
+const getJoeAlertState = (matchId: string): JoeAlertState => {
+	let state = joeAlertStates.get(matchId)
+	if (!state) {
+		state = {
+			firedCountdowns: new Set(),
+			firedTargetSwitches: new Set(),
+			nextTargetIndex: 2,
+		}
+		joeAlertStates.set(matchId, state)
 	}
-	return thresholds.has(threshold)
-}
-
-const markFiredJoe = (matchId: string, threshold: number): void => {
-	let thresholds = joeFiredAlerts.get(matchId)
-	if (!thresholds) {
-		thresholds = new Set()
-		joeFiredAlerts.set(matchId, thresholds)
-	}
-	thresholds.add(threshold)
+	return state
 }
 
 const telemetryAlertsMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) => (action: UnknownAction) => {
@@ -62,19 +74,45 @@ const telemetryAlertsMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) =>
 	}
 
 	const state = store.getState()
+	const ev = action.payload as any
 
-	// Extra wave Joe alert countdown
-	if (state.config.joeAlertEnabled === true) {
-		const ev = action.payload as any
-		if (ev.event === 'game_update' && ev.wave === 'extra') {
-			const matchId = state.overlay.match
-			if (matchId) {
-				const count = ev.count
-				if (typeof count === 'number' && count >= 20 && count <= 100 && count % 10 === 0) {
-					if (!hasFiredJoe(matchId, count)) {
-						markFiredJoe(matchId, count)
-						VoiceAlertManager.play('joe_alert_countdown')
+	if (
+		ev.event === 'matchmaking' &&
+		state.config.waveAnnouncementsEnabled === true
+	) {
+		const matchId = ev.session
+		if (matchId && firedMatchmaking.has(matchId) === false) {
+			firedMatchmaking.set(matchId, true)
+			VoiceAlertManager.play('matchmaking_start')
+		}
+	}
+
+	if (
+		ev.event === 'game_update' &&
+		ev.wave === 'extra' &&
+		state.config.joeAlertEnabled === true
+	) {
+		const matchId = state.overlay.match
+		if (matchId) {
+			const count = ev.count
+			const joeAlertState = getJoeAlertState(matchId)
+
+			if (typeof count === 'number' && count >= 24 && count <= 94 && count % 10 === 4) {
+				if (!joeAlertState.firedTargetSwitches.has(count)) {
+					joeAlertState.firedTargetSwitches.add(count)
+					const currentTargetIndex = joeAlertState.nextTargetIndex
+					const alertId = NEXT_TARGET_ALERTS[currentTargetIndex]
+					joeAlertState.nextTargetIndex = (currentTargetIndex % extraPlayers) + 1
+					if (alertId) {
+						VoiceAlertManager.play(alertId)
 					}
+				}
+			}
+
+			if (typeof count === 'number' && count >= 20 && count <= 100 && count % 10 === 0) {
+				if (!joeAlertState.firedCountdowns.has(count)) {
+					joeAlertState.firedCountdowns.add(count)
+					VoiceAlertManager.play('joe_alert_countdown')
 				}
 			}
 		}

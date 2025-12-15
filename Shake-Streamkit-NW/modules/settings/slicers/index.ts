@@ -8,6 +8,7 @@ interface ConfigState {
 	colorLock?: boolean
 	cameraId?: string
 	language?: string
+	waveAnnouncementsEnabled?: boolean
 	notifyOnQuotaMet?: boolean
 	notifyOnQuotaMetDuration?: number
 	notifyOnWaveFinished?: boolean
@@ -23,6 +24,7 @@ interface ConfigState {
 }
 
 const initialState: ConfigState = {
+	waveAnnouncementsEnabled: false,
 	joeAlertEnabled: false,
 	oomonAlertEnabled: false,
 }
@@ -43,10 +45,13 @@ const configSlice = createSlice({
 		},
 		setLanguage(state, action: PayloadAction<string>) {
 			state.language = action.payload
-		},
-		setNotifyOnQuotaMet(state, action: PayloadAction<boolean | undefined>) {
-			state.notifyOnQuotaMet = action.payload
-		},
+	},
+	setWaveAnnouncementsEnabled(state, action: PayloadAction<boolean | undefined>) {
+		state.waveAnnouncementsEnabled = action.payload
+	},
+	setNotifyOnQuotaMet(state, action: PayloadAction<boolean | undefined>) {
+		state.notifyOnQuotaMet = action.payload
+	},
 		setNotifyOnQuotaMetDuration(state, action: PayloadAction<number | undefined>) {
 			state.notifyOnQuotaMetDuration = action.payload
 		},
@@ -101,6 +106,7 @@ export const {
 	setColorLock,
 	setCameraId,
 	setLanguage,
+	setWaveAnnouncementsEnabled,
 		setNotifyOnQuotaMet,
 		setNotifyOnQuotaMetDuration,
 		setNotifyOnWaveFinished,

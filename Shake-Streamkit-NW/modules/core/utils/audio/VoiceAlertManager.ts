@@ -3,14 +3,32 @@
 // No React dependency; safe no-op in non-browser environments.
 import wave20sec from '@/voices/zunda/wave_20sec.wav'
 import joeAlertCountdown from '@/voices/zunda/joe_alert_countdown.wav'
+import joeNxt1st from '@/voices/zunda/joe_nxt1st.wav'
+import joeNxt2nd from '@/voices/zunda/joe_nxt2nd.wav'
+import joeNxt3rd from '@/voices/zunda/joe_nxt3rd.wav'
+import joeNxt4th from '@/voices/zunda/joe_nxt4th.wav'
 import oomonSpawn from '@/voices/countdown_3210.wav'
+import matchmakingStart from '@/voices/zunda/Call_GMK.wav'
 
-type AlertId = 'wave_20sec' | 'joe_alert_countdown' | 'oomon_spawn'
+export type AlertId =
+	| 'wave_20sec'
+	| 'joe_alert_countdown'
+	| 'joe_nxt1st'
+	| 'joe_nxt2nd'
+	| 'joe_nxt3rd'
+	| 'joe_nxt4th'
+	| 'oomon_spawn'
+	| 'matchmaking_start'
 
 const alertSources: Record<AlertId, string> = {
 	wave_20sec: wave20sec,
 	joe_alert_countdown: joeAlertCountdown,
+	joe_nxt1st: joeNxt1st,
+	joe_nxt2nd: joeNxt2nd,
+	joe_nxt3rd: joeNxt3rd,
+	joe_nxt4th: joeNxt4th,
 	oomon_spawn: oomonSpawn,
+	matchmaking_start: matchmakingStart,
 }
 
 const activePlayers = new Map<AlertId, HTMLAudioElement>()

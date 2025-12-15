@@ -18,6 +18,7 @@ import {
 	setOomonAlertEnabled,
 	setReduced,
 	setStatus,
+	setWaveAnnouncementsEnabled,
 } from '../slicers'
 
 const AdvancedPage = function () {
@@ -39,6 +40,7 @@ const AdvancedPage = function () {
 
 	const colorLocked = useAppSelector(state => state.config.colorLock) ?? false
 	const playerStatusEnabled = useAppSelector(state => state.config.status) ?? false
+	const waveAnnouncementsEnabled = useAppSelector(state => state.config.waveAnnouncementsEnabled) ?? false
 	let lastSpawnAlertEnabled = useAppSelector(state => state.config.lastSpawnAlertEnabled)
 	if (lastSpawnAlertEnabled === undefined) {
 		lastSpawnAlertEnabled = true
@@ -64,6 +66,9 @@ const AdvancedPage = function () {
 	}, [dispatch])
 	const handleColorLock = useCallback(function (colorLocked: boolean) {
 		dispatch(setColorLock(colorLocked))
+	}, [dispatch])
+	const handleWaveAnnouncements = useCallback(function (enabled: boolean) {
+		dispatch(setWaveAnnouncementsEnabled(enabled))
 	}, [dispatch])
 	const handleLastSpawnAlert = useCallback(function (enabled: boolean) {
 		dispatch(setLastSpawnAlertEnabled(enabled))
@@ -138,6 +143,13 @@ const AdvancedPage = function () {
 					onCheckedChange={handleColorLock}
 				>
 					{intl.formatMessage(DialogMessages.advancedColorLock)}
+				</CheckBox>
+				<CheckBox
+					id='waveannouncements'
+					checked={waveAnnouncementsEnabled}
+					onCheckedChange={handleWaveAnnouncements}
+				>
+					{intl.formatMessage(DialogMessages.advancedWaveAnnounce)}
 				</CheckBox>
 				<CheckBox
 					id='oomonalert'

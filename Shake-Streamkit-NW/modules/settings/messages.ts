@@ -51,6 +51,10 @@ const DialogMessages = defineMessages({
 		id: 'Dialog.advanced.colorLock',
 		defaultMessage: 'Color Lock',
 	},
+	advancedWaveAnnounce: {
+		id: 'Dialog.advanced.waveAnnounce',
+		defaultMessage: 'Wave開始アナウンス',
+	},
 	advancedOomonAlert: {
 		id: 'Dialog.advanced.oomonAlert',
 		defaultMessage: 'オオモノ湧きアラート',
