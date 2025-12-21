@@ -9,6 +9,12 @@ import joeNxt3rd from '@/voices/zunda/joe_nxt3rd.wav'
 import joeNxt4th from '@/voices/zunda/joe_nxt4th.wav'
 import oomonSpawn from '@/voices/countdown_3210.wav'
 import matchmakingStart from '@/voices/zunda/Call_GMK.wav'
+import callWave1 from '@/voices/zunda/Call_Wave1.wav'
+import callWave2 from '@/voices/zunda/Call_Wave2.wav'
+import callWave3 from '@/voices/zunda/Call_Wave3.wav'
+import callWave4 from '@/voices/zunda/Call_Wave4.wav'
+import callWave5 from '@/voices/zunda/Call_Wave5.wav'
+import callExtraWave from '@/voices/zunda/Call_ExtraWave.wav'
 
 export type AlertId =
 	| 'wave_20sec'
@@ -19,6 +25,12 @@ export type AlertId =
 	| 'joe_nxt4th'
 	| 'oomon_spawn'
 	| 'matchmaking_start'
+	| 'call_wave1'
+	| 'call_wave2'
+	| 'call_wave3'
+	| 'call_wave4'
+	| 'call_wave5'
+	| 'call_extrawave'
 
 const alertSources: Record<AlertId, string> = {
 	wave_20sec: wave20sec,
@@ -29,9 +41,15 @@ const alertSources: Record<AlertId, string> = {
 	joe_nxt4th: joeNxt4th,
 	oomon_spawn: oomonSpawn,
 	matchmaking_start: matchmakingStart,
+	call_wave1: callWave1,
+	call_wave2: callWave2,
+	call_wave3: callWave3,
+	call_wave4: callWave4,
+	call_wave5: callWave5,
+	call_extrawave: callExtraWave,
 }
 
-const activePlayers = new Map<AlertId, HTMLAudioElement>()
+const activePlayers = new Map<AlertId, HTMLAudioElement | null>()
 let masterVolume = 1.0
 
 const clampVolume = (value: number) => Math.max(0, Math.min(1, value))
@@ -78,6 +96,10 @@ const VoiceAlertManager = {
 			activePlayers.set(id, player)
 		}
 
+		if (!player) {
+			return
+		}
+
 		if (!player.paused && !player.ended) {
 			// Ignore duplicate play requests while the alert is already playing.
 			return
@@ -100,6 +122,9 @@ const VoiceAlertManager = {
 	setVolume(volume: number): void {
 		masterVolume = clampVolume(volume)
 		activePlayers.forEach(player => {
+			if (!player) {
+				return
+			}
 			player.volume = masterVolume
 		})
 	},

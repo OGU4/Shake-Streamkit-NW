@@ -1,6 +1,6 @@
 import { Dispatch, MiddlewareAPI, UnknownAction } from 'redux'
 
-import type { DefaultWaveType } from '@/core/utils/wave'
+import { isDefaultWave, type DefaultWaveType } from '@/core/utils/wave'
 import VoiceAlertManager from '@/core/utils/audio/VoiceAlertManager'
 import { addLog, type WaveAlertLog } from '@/notification/slicers'
 import type { ShakeDefaultWave } from '@/telemetry/models/data'
@@ -15,6 +15,15 @@ const extraPlayers = 4
 type FiredWaveMap = Map<DefaultWaveType, Set<number>>
 const firedAlerts = new Map<string, FiredWaveMap>()
 const firedMatchmaking = new Map<string, boolean>()
+const firedWaveAnnouncements = new Map<string, Set<DefaultWaveType>>()
+const firedExtraWaveAnnouncement = new Map<string, boolean>()
+const WAVE_ANNOUNCE_ALERTS: Record<DefaultWaveType, AlertId> = {
+	'1': 'call_wave1',
+	'2': 'call_wave2',
+	'3': 'call_wave3',
+	'4': 'call_wave4',
+	'5': 'call_wave5',
+}
 
 type JoeAlertState = {
 	firedCountdowns: Set<number>
@@ -84,6 +93,44 @@ const telemetryAlertsMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) =>
 		if (matchId && firedMatchmaking.has(matchId) === false) {
 			firedMatchmaking.set(matchId, true)
 			VoiceAlertManager.play('matchmaking_start')
+		}
+	}
+
+	if (
+		state.config.waveAnnouncementsEnabled === true &&
+		ev.event === 'game_king'
+	) {
+		const matchId = state.overlay.match ?? ev.session
+		if (matchId && firedExtraWaveAnnouncement.has(matchId) === false) {
+			firedExtraWaveAnnouncement.set(matchId, true)
+			VoiceAlertManager.play('call_extrawave')
+		}
+	}
+
+	if (
+		state.config.waveAnnouncementsEnabled === true &&
+		ev.event === 'game_update' &&
+		isDefaultWave(ev.wave)
+	) {
+		const wave = ev.wave as DefaultWaveType
+		const matchId = state.overlay.match
+		if (matchId) {
+			const telemetry = state.telemetry.entities[matchId]
+			const waveData = telemetry?.waves[wave] as ShakeDefaultWave | undefined
+			if (waveData && waveData.updates.length === 1) {
+				let firedWaves = firedWaveAnnouncements.get(matchId)
+				if (!firedWaves) {
+					firedWaves = new Set()
+					firedWaveAnnouncements.set(matchId, firedWaves)
+				}
+				if (!firedWaves.has(wave)) {
+					firedWaves.add(wave)
+					const alertId = WAVE_ANNOUNCE_ALERTS[wave]
+					if (alertId) {
+						VoiceAlertManager.play(alertId)
+					}
+				}
+			}
 		}
 	}
 
