@@ -40,6 +40,8 @@
 	"Dialog.development.broadcastMode.enabled": "Aktivieren",
 	"Dialog.development.broadcastSoftware": "Broadcast-Software: {software}",
 
+	"Dialog.script": "Script",
+
 	"Dialog.general": "Allgemein",
 	"Dialog.general.overlay": "Overlay",
 	"Dialog.general.autoHide": "Overlay automatisch ausblenden",
@@ -69,6 +71,13 @@
 	"overlay.hideOverlay": "Overlay Ausblenden",
 	"overlay.showOverlay": "Overlay Anzeigen",
 	"overlay.showOverlayWithWave": "Welle {wave} Anzeigen",
+
+	"Script.title": "Script",
+	"Script.enable": "Enable script feature",
+	"Script.edit": "Edit script",
+	"Script.editorTitle": "Script editor",
+	"Script.autoSave": "Changes save automatically to this browser.",
+	"Script.waveTab": "Wave {wave}",
 
 	"Result.clear": "Geschafft!",
 	"Result.defeat": "Schade...",
