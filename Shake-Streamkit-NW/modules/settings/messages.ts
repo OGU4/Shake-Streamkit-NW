@@ -156,6 +156,11 @@ const DialogMessages = defineMessages({
 		defaultMessage: 'Broadcast Software: {software}',
 	},
 
+	script: {
+		id: 'Dialog.script',
+		defaultMessage: 'Script',
+	},
+
 	log: {
 		id: 'Dialog.log',
 		defaultMessage: 'Log',

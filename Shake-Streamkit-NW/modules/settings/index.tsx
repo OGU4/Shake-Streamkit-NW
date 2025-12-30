@@ -15,6 +15,7 @@ import DataSourcePage from './pages/DataSourcePage'
 import DevelopmentPage from './pages/DevelopmentPage'
 import GeneralPage from './pages/GeneralPage'
 import LogPage from './pages/LogPage'
+import ScriptPage from './pages/ScriptPage'
 
 const SettingsWindow = () => {
 	const intl = useIntl()
@@ -47,6 +48,9 @@ const SettingsWindow = () => {
 							<Tabs.Trigger className='Dialog-tabitem' value='advanced'>
 								{intl.formatMessage(DialogMessages.advanced)}
 							</Tabs.Trigger>
+							<Tabs.Trigger className='Dialog-tabitem' value='script'>
+								{intl.formatMessage(DialogMessages.script)}
+							</Tabs.Trigger>
 							<Tabs.Trigger className='Dialog-tabitem' value='datasource'>
 								{intl.formatMessage(DialogMessages.dataSource)}
 							</Tabs.Trigger>
@@ -65,6 +69,9 @@ const SettingsWindow = () => {
 						</Tabs.Content>
 						<Tabs.Content className='Dialog-tabcontent' value='advanced'>
 							<AdvancedPage />
+						</Tabs.Content>
+						<Tabs.Content className='Dialog-tabcontent' value='script'>
+							<ScriptPage />
 						</Tabs.Content>
 						<Tabs.Content className='Dialog-tabcontent' value='datasource'>
 							<DataSourcePage />

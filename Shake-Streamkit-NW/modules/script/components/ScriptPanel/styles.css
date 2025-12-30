@@ -1,0 +1,28 @@
+.ScriptPanel {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	flex: 1 1 320px;
+	max-width: 420px;
+
+	padding: 10px 12px;
+	border: 1px solid var(--ctl-bg--disable);
+	border-radius: var(--wnd-radius);
+
+	background-color: #00000026;
+}
+
+.ScriptPanel-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	justify-content: space-between;
+}
+
+.ScriptPanel-title {
+	font-size: 1rem;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+}

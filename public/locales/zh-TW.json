@@ -40,6 +40,8 @@
 	"Dialog.development.broadcastMode.enabled": "啟用",
 	"Dialog.development.broadcastSoftware": "廣播軟體：{software}",
 
+	"Dialog.script": "Script",
+
 	"Dialog.general": "一般",
 	"Dialog.general.overlay": "疊加",
 	"Dialog.general.autoHide": "自動隱藏疊加層",
@@ -69,6 +71,13 @@
 	"overlay.hideOverlay": "隱藏疊加",
 	"overlay.showOverlay": "顯示疊加",
 	"overlay.showOverlayWithWave": "顯示WAVE {wave}",
+
+	"Script.title": "Script",
+	"Script.enable": "Enable script feature",
+	"Script.edit": "Edit script",
+	"Script.editorTitle": "Script editor",
+	"Script.autoSave": "Changes save automatically to this browser.",
+	"Script.waveTab": "Wave {wave}",
 
 	"Result.clear": "Clear！！",
 	"Result.defeat": "Failure",

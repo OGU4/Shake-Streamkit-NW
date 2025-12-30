@@ -40,6 +40,8 @@
 	"Dialog.development.broadcastMode.enabled": "有効",
 	"Dialog.development.broadcastSoftware": "配信ソフト: {software}",
 
+	"Dialog.script": "台本",
+
 	"Dialog.general": "一般",
 	"Dialog.general.overlay": "オーバーレイ",
 	"Dialog.general.autoHide": "オーバーレイを自動で非表示にする",
@@ -69,6 +71,13 @@
 	"overlay.hideOverlay": "オーバーレイを非表示",
 	"overlay.showOverlay": "オーバーレイを表示",
 	"overlay.showOverlayWithWave": "WAVE{wave}を表示",
+
+	"Script.title": "台本",
+	"Script.enable": "台本機能を有効にする",
+	"Script.edit": "台本編集",
+	"Script.editorTitle": "台本編集",
+	"Script.autoSave": "変更はこのブラウザに自動保存されます。",
+	"Script.waveTab": "WAVE {wave}",
 
 	"Result.clear": "Clear!!",
 	"Result.defeat": "Failure",

@@ -40,6 +40,8 @@
 	"Dialog.development.broadcastMode.enabled": "켜기",
 	"Dialog.development.broadcastSoftware": "방송 소프트웨어: {software}",
 
+	"Dialog.script": "Script",
+
 	"Dialog.general": "일반",
 	"Dialog.general.overlay": "오버레이",
 	"Dialog.general.autoHide": "오버레이 자동으로 끄기",
@@ -69,6 +71,13 @@
 	"overlay.hideOverlay": "오버레이 끄기",
 	"overlay.showOverlay": "오버레이 켜기",
 	"overlay.showOverlayWithWave": "WAVE {wave} 켜기",
+
+	"Script.title": "Script",
+	"Script.enable": "Enable script feature",
+	"Script.edit": "Edit script",
+	"Script.editorTitle": "Script editor",
+	"Script.autoSave": "Changes save automatically to this browser.",
+	"Script.waveTab": "Wave {wave}",
 
 	"Result.clear": "Clear!!",
 	"Result.defeat": "Failure",

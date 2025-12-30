@@ -40,6 +40,8 @@
 	"Dialog.development.broadcastMode.enabled": "Включено",
 	"Dialog.development.broadcastSoftware": "Программное обеспечение для трансляции: {software}",
 
+	"Dialog.script": "Script",
+
 	"Dialog.general": "Основные",
 	"Dialog.general.overlay": "Наложение",
 	"Dialog.general.autoHide": "Автоматически скрывать наложение",
@@ -69,6 +71,13 @@
 	"overlay.hideOverlay": "Скрыть наложение",
 	"overlay.showOverlay": "Показать наложение",
 	"overlay.showOverlayWithWave": "Показать волна {wave}",
+
+	"Script.title": "Script",
+	"Script.enable": "Enable script feature",
+	"Script.edit": "Edit script",
+	"Script.editorTitle": "Script editor",
+	"Script.autoSave": "Changes save automatically to this browser.",
+	"Script.waveTab": "Wave {wave}",
 
 	"Result.clear": "Успех!",
 	"Result.defeat": "Провал",

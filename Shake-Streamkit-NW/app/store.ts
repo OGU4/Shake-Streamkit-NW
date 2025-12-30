@@ -4,6 +4,8 @@ import persistStore from 'redux-persist/es/persistStore'
 
 import autoCleanupLogs from '@/notification/middlewares/autoCleanupLogs'
 import log from '@/notification/slicers'
+import script from '@/script/slicers'
+import { scriptStorageListener } from '@/script/middlewares/storage'
 import overlay from '@/overlay/slicers'
 import config from '@/settings/slicers'
 import telemetry from '@/telemetry/slicers'
@@ -14,6 +16,7 @@ import telemetryAlertsMiddleware from '../modules/telemetry/middlewares/alerts'
 const rootReducer = combineReducers({
 	config,
 	log,
+	script,
 	overlay,
 	telemetry,
 })
@@ -24,10 +27,16 @@ export type RootState = ReturnType<typeof rootReducer>
 const store = configureStore({
 	reducer: rootReducer,
 	middleware: getDefaultMiddleware => getDefaultMiddleware({
-		serializableCheck: {
-			ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-		},
-		}).concat(overlayMiddleware as any, telemetryAlertsMiddleware as any, autoCleanupLogs),
+			serializableCheck: {
+				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+			},
+		})
+		.concat(
+			scriptStorageListener.middleware as any,
+			overlayMiddleware as any,
+			telemetryAlertsMiddleware as any,
+			autoCleanupLogs,
+		),
 })
 
 export const persistor = persistStore(store)

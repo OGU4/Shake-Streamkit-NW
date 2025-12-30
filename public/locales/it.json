@@ -40,6 +40,8 @@
 	"Dialog.development.broadcastMode.enabled": "Abilitata",
 	"Dialog.development.broadcastSoftware": "Software trasmissione: {software}",
 
+	"Dialog.script": "Script",
+
 	"Dialog.general": "Generale",
 	"Dialog.general.overlay": "Sovrapposizione",
 	"Dialog.general.autoHide": "Nascondi automaticamente la sovrapposizione",
@@ -69,6 +71,13 @@
 	"overlay.hideOverlay": "Nascondi sovrapposizione",
 	"overlay.showOverlay": "Mostra sovrapposizione",
 	"overlay.showOverlayWithWave": "Mostra ondata {wave}",
+
+	"Script.title": "Script",
+	"Script.enable": "Enable script feature",
+	"Script.edit": "Edit script",
+	"Script.editorTitle": "Script editor",
+	"Script.autoSave": "Changes save automatically to this browser.",
+	"Script.waveTab": "Wave {wave}",
 
 	"Result.clear": "Ce l'hai fatta!",
 	"Result.defeat": "Peccato...",

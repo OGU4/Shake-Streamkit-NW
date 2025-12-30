@@ -40,6 +40,8 @@
 	"Dialog.development.broadcastMode.enabled": "Activado",
 	"Dialog.development.broadcastSoftware": "Software de difusión: {software}",
 
+	"Dialog.script": "Script",
+
 	"Dialog.general": "General",
 	"Dialog.general.overlay": "Superposición",
 	"Dialog.general.autoHide": "Cerrar superposición automáticamente",
@@ -69,6 +71,13 @@
 	"overlay.hideOverlay": "Cerrar superposición",
 	"overlay.showOverlay": "Abrir superposición",
 	"overlay.showOverlayWithWave": "Abrir ofensiva {wave}",
+
+	"Script.title": "Script",
+	"Script.enable": "Enable script feature",
+	"Script.edit": "Edit script",
+	"Script.editorTitle": "Script editor",
+	"Script.autoSave": "Changes save automatically to this browser.",
+	"Script.waveTab": "Wave {wave}",
 
 	"Result.clear": "¡Bravo!",
 	"Result.defeat": "Lástima...",
