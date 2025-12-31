@@ -13,6 +13,26 @@ const ScriptMessages = defineMessages({
 		id: 'Script.edit',
 		defaultMessage: 'Edit script',
 	},
+	voice: {
+		id: 'Script.voice',
+		defaultMessage: 'Voice',
+	},
+	volume: {
+		id: 'Script.volume',
+		defaultMessage: 'Volume',
+	},
+	voiceUnavailable: {
+		id: 'Script.voiceUnavailable',
+		defaultMessage: 'No Japanese voices available in this browser.',
+	},
+	voiceDefault: {
+		id: 'Script.voiceDefault',
+		defaultMessage: 'Browser default (Japanese if available)',
+	},
+	test: {
+		id: 'Script.test',
+		defaultMessage: '読み上げテスト',
+	},
 	editorTitle: {
 		id: 'Script.editorTitle',
 		defaultMessage: 'Script editor',

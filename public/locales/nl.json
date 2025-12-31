@@ -75,8 +75,13 @@
 	"Script.title": "Script",
 	"Script.enable": "Enable script feature",
 	"Script.edit": "Edit script",
+	"Script.voice": "Voice",
+	"Script.voiceUnavailable": "No Japanese voices available in this browser.",
+	"Script.voiceDefault": "Browser default (Japanese if available)",
+	"Script.volume": "Volume",
 	"Script.editorTitle": "Script editor",
 	"Script.autoSave": "Changes save automatically to this browser.",
+	"Script.test": "読み上げテスト",
 	"Script.waveTab": "Wave {wave}",
 
 	"Result.clear": "Gelukt!!",

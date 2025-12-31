@@ -1,10 +1,10 @@
-import { defaultScriptStorage, type ScriptStorageV1, type ScriptWaveId } from '../models/storage'
+import { defaultScriptStorage, type ScriptStorage, type ScriptStorageV2, type ScriptWaveId } from '../models/storage'
 
 export const SCRIPT_STORAGE_KEY = 'shake-streamkit-nw:script'
 
 const SCRIPT_WAVE_IDS: ScriptWaveId[] = ['Wave1', 'Wave2', 'Wave3', 'Wave4', 'Wave5']
 
-const normalizeScriptStorageV1 = (data: any): ScriptStorageV1 => {
+const normalizeScriptStorageV2 = (data: any): ScriptStorageV2 => {
 	const waves = SCRIPT_WAVE_IDS.reduce((draft, waveId) => {
 		const text = typeof data?.waves?.[waveId] === 'string'
 			? data.waves[waveId]
@@ -14,13 +14,30 @@ const normalizeScriptStorageV1 = (data: any): ScriptStorageV1 => {
 	}, {} as Record<ScriptWaveId, string>)
 
 	return {
-		version: 1,
+		version: 2,
 		enabled: data?.enabled === true,
+		volume: typeof data?.volume === 'number' ? Math.max(0, Math.min(1, data.volume)) : 1,
+		voice: typeof data?.voice === 'string' ? data.voice : undefined,
 		waves,
 	}
 }
 
-export const loadScriptStorage = (): ScriptStorageV1 => {
+const migrate = (data: any): ScriptStorageV2 => {
+	if (data?.version === 2) {
+		return normalizeScriptStorageV2(data)
+	}
+	if (data?.version === 1) {
+		const next = normalizeScriptStorageV2({
+			...data,
+			volume: 1,
+			voice: undefined,
+		})
+		return next
+	}
+	return defaultScriptStorage
+}
+
+export const loadScriptStorage = (): ScriptStorageV2 => {
 	if (typeof window === 'undefined') {
 		return defaultScriptStorage
 	}
@@ -32,17 +49,13 @@ export const loadScriptStorage = (): ScriptStorageV1 => {
 		}
 
 		const parsed = JSON.parse(stored)
-		if (parsed?.version !== 1) {
-			return defaultScriptStorage
-		}
-
-		return normalizeScriptStorageV1(parsed)
+		return migrate(parsed as ScriptStorage)
 	} catch {
 		return defaultScriptStorage
 	}
 }
 
-export const saveScriptStorage = (storage: ScriptStorageV1): void => {
+export const saveScriptStorage = (storage: ScriptStorageV2): void => {
 	if (typeof window === 'undefined') {
 		return
 	}

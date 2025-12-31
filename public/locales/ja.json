@@ -75,8 +75,13 @@
 	"Script.title": "台本",
 	"Script.enable": "台本機能を有効にする",
 	"Script.edit": "台本編集",
+	"Script.voice": "読み上げボイス",
+	"Script.voiceUnavailable": "日本語の音声がブラウザで利用できません。",
+	"Script.voiceDefault": "ブラウザのデフォルト（日本語があれば使用）",
+	"Script.volume": "音量",
 	"Script.editorTitle": "台本編集",
 	"Script.autoSave": "変更はこのブラウザに自動保存されます。",
+	"Script.test": "読み上げテスト",
 	"Script.waveTab": "WAVE {wave}",
 
 	"Result.clear": "Clear!!",

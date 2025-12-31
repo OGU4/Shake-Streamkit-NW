@@ -44,6 +44,59 @@
 	gap: 12px;
 }
 
+.ScriptEditor-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.ScriptEditor-control {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 220px;
+	flex: 1 1 240px;
+}
+
+.ScriptEditor-label {
+	font-size: .95rem;
+	color: var(--fg-secondary);
+}
+
+.ScriptEditor-select {
+	border-radius: var(--ctl-radius);
+	border: 1px solid var(--ctl-bg-opaque-l2);
+	padding: .4em .6em;
+	background: var(--ctl-bg);
+	color: inherit;
+}
+
+.ScriptEditor input[type='range'] {
+	appearance: none;
+	width: 100%;
+	height: 6px;
+	border-radius: 999px;
+	background: var(--ctl-bg-opaque-l2);
+	outline: none;
+}
+.ScriptEditor input[type='range']::-webkit-slider-thumb {
+	appearance: none;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--ctl-bg-active);
+	border: 1px solid var(--ctl-st);
+	cursor: pointer;
+}
+.ScriptEditor input[type='range']::-moz-range-thumb {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--ctl-bg-active);
+	border: 1px solid var(--ctl-st);
+	cursor: pointer;
+}
+
 .ScriptEditor-tablist {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
@@ -69,6 +122,9 @@
 
 .ScriptEditor-content {
 	display: block;
+}
+.ScriptEditor-content[data-state='inactive'] {
+	display: none;
 }
 
 .ScriptEditor-textarea {
@@ -103,4 +159,10 @@
 	margin: 0;
 	color: var(--fg-tertiary);
 	font-size: .9rem;
+}
+
+.ScriptEditor-test {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 8px;
 }

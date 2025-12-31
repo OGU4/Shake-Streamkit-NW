@@ -6,6 +6,7 @@ import autoCleanupLogs from '@/notification/middlewares/autoCleanupLogs'
 import log from '@/notification/slicers'
 import script from '@/script/slicers'
 import { scriptStorageListener } from '@/script/middlewares/storage'
+import scriptSpeechMiddleware from '@/script/middlewares/speech'
 import overlay from '@/overlay/slicers'
 import config from '@/settings/slicers'
 import telemetry from '@/telemetry/slicers'
@@ -33,6 +34,7 @@ const store = configureStore({
 		})
 		.concat(
 			scriptStorageListener.middleware as any,
+			scriptSpeechMiddleware as any,
 			overlayMiddleware as any,
 			telemetryAlertsMiddleware as any,
 			autoCleanupLogs,

@@ -11,11 +11,18 @@ export interface ScriptStorageV1 {
 	waves: Record<ScriptWaveId, string>
 }
 
-export type ScriptStorage = ScriptStorageV1
+export interface ScriptStorageV2 extends ScriptStorageV1 {
+	version: 2
+	volume: number
+	voice?: string
+}
 
-export const defaultScriptStorage: ScriptStorageV1 = {
-	version: 1,
+export type ScriptStorage = ScriptStorageV1 | ScriptStorageV2
+
+export const defaultScriptStorage: ScriptStorageV2 = {
+	version: 2,
 	enabled: false,
+	volume: 1,
 	waves: {
 		Wave1: '',
 		Wave2: '',
