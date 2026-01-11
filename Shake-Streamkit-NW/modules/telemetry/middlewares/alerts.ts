@@ -5,6 +5,7 @@ import VoiceAlertManager from '@/core/utils/audio/VoiceAlertManager'
 import { addLog, type WaveAlertLog } from '@/notification/slicers'
 import type { ShakeDefaultWave } from '@/telemetry/models/data'
 import { addTelemetry } from '@/telemetry/slicers'
+import { tick as tickShadowCounter } from '@/shadowCounter/slicers'
 
 import type { RootState } from 'app/store'
 import type { AlertId } from '@/core/utils/audio/VoiceAlertManager'
@@ -78,88 +79,94 @@ const getJoeAlertState = (matchId: string): JoeAlertState => {
 
 const telemetryAlertsMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) => (action: UnknownAction) => {
 	const result = next(action)
-	if (!addTelemetry.match(action)) {
+	const isAddTelemetry = addTelemetry.match(action)
+	const isShadowTick = tickShadowCounter.match(action)
+	if (!isAddTelemetry && !isShadowTick) {
 		return result
 	}
 
 	const state = store.getState()
 	const ev = action.payload as any
 
-	if (
-		ev.event === 'matchmaking' &&
-		state.config.waveAnnouncementsEnabled === true
-	) {
-		const matchId = ev.session
-		if (matchId && firedMatchmaking.has(matchId) === false) {
-			firedMatchmaking.set(matchId, true)
-			VoiceAlertManager.play('matchmaking_start')
+	if (isAddTelemetry) {
+		if (
+			ev.event === 'matchmaking' &&
+			state.config.waveAnnouncementsEnabled === true
+		) {
+			const matchId = ev.session
+			if (matchId && firedMatchmaking.has(matchId) === false) {
+				firedMatchmaking.set(matchId, true)
+				VoiceAlertManager.play('matchmaking_start')
+			}
 		}
-	}
 
-	if (
-		state.config.waveAnnouncementsEnabled === true &&
-		ev.event === 'game_king'
-	) {
-		const matchId = state.overlay.match ?? ev.session
-		if (matchId && firedExtraWaveAnnouncement.has(matchId) === false) {
-			firedExtraWaveAnnouncement.set(matchId, true)
-			VoiceAlertManager.play('call_extrawave')
+		if (
+			state.config.waveAnnouncementsEnabled === true &&
+			ev.event === 'game_king'
+		) {
+			const matchId = state.overlay.match ?? ev.session
+			if (matchId && firedExtraWaveAnnouncement.has(matchId) === false) {
+				firedExtraWaveAnnouncement.set(matchId, true)
+				VoiceAlertManager.play('call_extrawave')
+			}
 		}
-	}
 
-	if (
-		state.config.waveAnnouncementsEnabled === true &&
-		ev.event === 'game_update' &&
-		isDefaultWave(ev.wave)
-	) {
-		const wave = ev.wave as DefaultWaveType
-		const matchId = state.overlay.match
-		if (matchId) {
-			const telemetry = state.telemetry.entities[matchId]
-			const waveData = telemetry?.waves[wave] as ShakeDefaultWave | undefined
-			if (waveData && waveData.updates.length === 1) {
-				let firedWaves = firedWaveAnnouncements.get(matchId)
-				if (!firedWaves) {
-					firedWaves = new Set()
-					firedWaveAnnouncements.set(matchId, firedWaves)
-				}
-				if (!firedWaves.has(wave)) {
-					firedWaves.add(wave)
-					const alertId = WAVE_ANNOUNCE_ALERTS[wave]
-					if (alertId) {
-						VoiceAlertManager.play(alertId)
+		if (
+			state.config.waveAnnouncementsEnabled === true &&
+			ev.event === 'game_update' &&
+			isDefaultWave(ev.wave)
+		) {
+			const wave = ev.wave as DefaultWaveType
+			const matchId = state.overlay.match
+			if (matchId) {
+				const telemetry = state.telemetry.entities[matchId]
+				const waveData = telemetry?.waves[wave] as ShakeDefaultWave | undefined
+				if (waveData && waveData.updates.length === 1) {
+					let firedWaves = firedWaveAnnouncements.get(matchId)
+					if (!firedWaves) {
+						firedWaves = new Set()
+						firedWaveAnnouncements.set(matchId, firedWaves)
+					}
+					if (!firedWaves.has(wave)) {
+						firedWaves.add(wave)
+						const alertId = WAVE_ANNOUNCE_ALERTS[wave]
+						if (alertId) {
+							VoiceAlertManager.play(alertId)
+						}
 					}
 				}
 			}
 		}
 	}
 
-	if (
-		ev.event === 'game_update' &&
-		ev.wave === 'extra' &&
-		state.config.joeAlertEnabled === true
-	) {
-		const matchId = state.overlay.match
-		if (matchId) {
-			const count = ev.count
-			const joeAlertState = getJoeAlertState(matchId)
+	if (isAddTelemetry) {
+		if (
+			ev.event === 'game_update' &&
+			ev.wave === 'extra' &&
+			state.config.joeAlertEnabled === true
+		) {
+			const matchId = state.overlay.match
+			if (matchId) {
+				const count = ev.count
+				const joeAlertState = getJoeAlertState(matchId)
 
-			if (typeof count === 'number' && count >= 24 && count <= 94 && count % 10 === 4) {
-				if (!joeAlertState.firedTargetSwitches.has(count)) {
-					joeAlertState.firedTargetSwitches.add(count)
-					const currentTargetIndex = joeAlertState.nextTargetIndex
-					const alertId = NEXT_TARGET_ALERTS[currentTargetIndex]
-					joeAlertState.nextTargetIndex = (currentTargetIndex % extraPlayers) + 1
-					if (alertId) {
-						VoiceAlertManager.play(alertId)
+				if (typeof count === 'number' && count >= 24 && count <= 94 && count % 10 === 4) {
+					if (!joeAlertState.firedTargetSwitches.has(count)) {
+						joeAlertState.firedTargetSwitches.add(count)
+						const currentTargetIndex = joeAlertState.nextTargetIndex
+						const alertId = NEXT_TARGET_ALERTS[currentTargetIndex]
+						joeAlertState.nextTargetIndex = (currentTargetIndex % extraPlayers) + 1
+						if (alertId) {
+							VoiceAlertManager.play(alertId)
+						}
 					}
 				}
-			}
 
-			if (typeof count === 'number' && count >= 20 && count <= 100 && count % 10 === 0) {
-				if (!joeAlertState.firedCountdowns.has(count)) {
-					joeAlertState.firedCountdowns.add(count)
-					VoiceAlertManager.play('joe_alert_countdown')
+				if (typeof count === 'number' && count >= 20 && count <= 100 && count % 10 === 0) {
+					if (!joeAlertState.firedCountdowns.has(count)) {
+						joeAlertState.firedCountdowns.add(count)
+						VoiceAlertManager.play('joe_alert_countdown')
+					}
 				}
 			}
 		}
@@ -201,8 +208,14 @@ const telemetryAlertsMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) =>
 	}
 	const previousUpdate = updates.at(-2)
 
-	const latestCount = latestUpdate.count
-	const previousCount = previousUpdate?.count
+	const shadow = state.shadowCounter
+	const useShadow = shadow.running === true && shadow.wave === waveData.wave
+	let latestCount = latestUpdate.count
+	let previousCount = previousUpdate?.count
+	if (useShadow) {
+		latestCount = shadow.value
+		previousCount = shadow.prevValue ?? shadow.value
+	}
 
 	if (latestCount > THRESHOLD_IN_SECONDS) {
 		return result

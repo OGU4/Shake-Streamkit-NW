@@ -10,9 +10,11 @@ import scriptSpeechMiddleware from '@/script/middlewares/speech'
 import overlay from '@/overlay/slicers'
 import config from '@/settings/slicers'
 import telemetry from '@/telemetry/slicers'
+import shadowCounter from '@/shadowCounter/slicers'
 
 import overlayMiddleware from '../modules/overlay/middlewares'
 import telemetryAlertsMiddleware from '../modules/telemetry/middlewares/alerts'
+import shadowCounterMiddleware from '../modules/shadowCounter/middlewares'
 
 const rootReducer = combineReducers({
 	config,
@@ -20,6 +22,7 @@ const rootReducer = combineReducers({
 	script,
 	overlay,
 	telemetry,
+	shadowCounter,
 })
 
 // Infer the `RootState` types from the store itself
@@ -37,6 +40,7 @@ const store = configureStore({
 			scriptSpeechMiddleware as any,
 			overlayMiddleware as any,
 			telemetryAlertsMiddleware as any,
+			shadowCounterMiddleware as any,
 			autoCleanupLogs,
 		),
 })

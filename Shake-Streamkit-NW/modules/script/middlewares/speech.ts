@@ -2,6 +2,7 @@ import { Dispatch, MiddlewareAPI, UnknownAction } from 'redux'
 
 import { isDefaultWave } from '@/core/utils/wave'
 import { addTelemetry } from '@/telemetry/slicers'
+import { tick as tickShadowCounter } from '@/shadowCounter/slicers'
 
 import type { RootState } from 'app/store'
 
@@ -29,7 +30,7 @@ const ensureSession = (matchId: string): FiredState => {
 const scriptSpeechMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) => (next: Dispatch) => (action: UnknownAction) => {
 	const result = next(action)
 
-	if (!addTelemetry.match(action)) {
+	if (!addTelemetry.match(action) && !tickShadowCounter.match(action)) {
 		return result
 	}
 
@@ -67,22 +68,27 @@ const scriptSpeechMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) => (n
 	}
 
 	const updates = waveData.updates
-	if (!updates || updates.length < 2) {
+	const shadow = state.shadowCounter
+	const useShadow = shadow.running === true && shadow.wave === waveData.wave
+	if (!useShadow && (!updates || updates.length < 2)) {
 		return result
 	}
 
 	const latestUpdate = updates.at(-1)
 	const previousUpdate = updates.at(-2)
-	if (!latestUpdate || !previousUpdate) {
+	if (!latestUpdate || (!useShadow && !previousUpdate)) {
 		return result
 	}
 
-	const latestCount = latestUpdate.count
-	const previousCount = previousUpdate.count
+	let latestCount = latestUpdate?.count
+	let previousCount = previousUpdate?.count
+	if (useShadow) {
+		latestCount = shadow.value
+		previousCount = shadow.prevValue ?? shadow.value
+	}
 	if (typeof latestCount !== 'number' || typeof previousCount !== 'number') {
 		return result
 	}
-
 	const session = ensureSession(matchId)
 	if (session.wave !== waveData.wave) {
 		session.wave = waveData.wave

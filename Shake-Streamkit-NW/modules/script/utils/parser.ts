@@ -7,7 +7,7 @@ export type ScriptEntry = {
 	waveId: ScriptWaveId
 }
 
-const isCountInRange = (count: number): boolean => count >= 0 && count <= 100
+const isCountInRange = (count: number): boolean => count >= 0 && count <= 110
 
 export const parseScript = (waveId: ScriptWaveId, text: string): ScriptEntry[] => {
 	return text.split(/\r?\n/).flatMap((line, index) => {
