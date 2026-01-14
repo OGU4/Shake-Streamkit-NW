@@ -2,76 +2,84 @@
 
 # Shake StreamKit
 
-Shake StreamKit is a browser overlay for Splatoon 3 Salmon Run Next Wave. It receives telemetry from ShakeScouter over WebSocket (or file import) and renders the overlay UI for OBS Browser Source or normal browsers.
+Shake StreamKit は、Splatoon 3 のサーモンラン NEXT WAVE テレメトリを WebSocket で受信し、配信画面に重ねるブラウザ用オーバーレイです。OBS のブラウザソースや通常のブラウザで動作します。
 
-## Features
+## できること
 
-- Overlay + controller UI for Salmon Run telemetry (waves, quota, timer, player status).
-- Auto show/hide on quota met or wave finish, with configurable durations.
-- Notifications/logs for WebSocket events and alerts.
-- Voice alerts: wave announcements, 20s warning, Oomon spawn cue, Joe (Extra Wave) countdown/target callouts.
-- Script feature: custom speech based on remaining time, editable in a dedicated Script Editor window.
-- Multi-language UI (13 locales).
+- リアルタイムのWave/残り時間/イクラ状況/プレイヤーステータス表示
+- Wave終了やノルマ達成時の自動表示・自動非表示
+- WebSocket接続ログ/通知の表示
+- 音声アラート（Wave開始、20秒警告、オオモノ湧き予告、EX Wave(Joe)カウントダウンなど）
+- Script機能（残り秒数に応じた読み上げ）と専用エディタ
+- 13言語対応のUI
 
-## Requirements
+## 必要環境
 
-- Node.js 18+ (20 LTS recommended).
-- Git LFS (for voice assets).
+- Node.js 18+（20 LTS推奨）
+- Git LFS（アイコン画像の取得に必要）
 
-## Install
+## セットアップ
 
 ```bash
-git lfs clone https://github.com/mntone/shake-streamkit.git
-cd shake-streamkit
+git lfs install
+
+git clone https://github.com/OGU4/Shake-Streamkit-NW
+cd Shake-Streamkit-NW
 npm install
 ```
 
-## Run
+## 起動
 
 ```bash
 npm start
 ```
 
-Open `http://localhost:5173/`.
+`http://localhost:5173/` にアクセスします。
 
-Notes:
-- The app expects `base: /shake-streamkit/` (see `vite.config.ts`). When deploying under a different path, update the Vite base accordingly.
-- `npm run build` outputs to `dist/`. Use `npm run preview` for a local production check.
+### 本番ビルド
 
-## Usage
+```bash
+npm run build
+npm run preview
+```
 
-### 1) WebSocket / File Input
+- 出力は `dist/`。
+- `vite.config.ts` の `base` は `/shake-streamkit/` です。公開パスが違う場合は修正してください。
+
+## 使い方
+
+### 1) WebSocket / ファイル入力
 - Settings -> Data Source
-  - Server address is `host[:port]` (no scheme). Default is `.env` `VITE_WS_SERVER=localhost:4649`.
-  - File input accepts NDJSON (one JSON event per line, `.json` extension).
-  - Simulation playback can replay file input at 0.5x–10x speed.
+  - Server Address は `host[:port]`（スキームなし）
+  - 既定は `.env` の `VITE_WS_SERVER=localhost:4649`
+  - File Input は NDJSON（1行1イベント）の `.json` を受け付け
+  - Simulation を有効にすると 0.5x〜10x で再生
 
-If you connect mid-match, the banner will indicate that the current match is ignored and the overlay waits for the next matchmaking event.
+### 2) オーバーレイ挙動
+- Settings -> General / Advanced
+  - ノルマ達成/ Wave終了で自動表示
+  - 自動非表示の時間調整
+  - プレイヤーステータス表示、色固定、アニメーション抑制
 
-### 2) Overlay Behavior
-- Settings -> General/Advanced
-  - Auto show/hide on quota met or wave finish.
-  - Duration sliders for each trigger.
-  - Player status overlay, color lock, reduced motion.
+### 3) Script機能（読み上げ）
+- Settings -> Script で有効化
+- Edit ボタンで `/script-editor` を開く
+- 1行1ルールの形式:
+  - `残り秒数 テキスト`
+  - 例: `20 20秒です`
+- Wave 1〜5、5セットに対応
+- 日本語音声（Web Speech API）が使えるブラウザのみ読み上げ可
 
-### 3) Script Feature (Custom Speech)
-- Settings -> Script -> enable.
-- Click Edit to open `/script-editor` in a new window.
-- Format (one line per rule):
-  - `remainingSeconds text`
-  - Example: `20 20 seconds left`
-- Supports 5 sets and Wave 1–5 tabs. Uses Web Speech (Japanese voices only, if available).
-
-### 4) Voice Alerts
+### 4) 音声アラート
 - Settings -> Advanced
-  - Wave announcements (start + extra wave).
-  - 20-second warning voice.
-  - Oomon spawn alert (countdown cue).
-  - Joe (Extra Wave) countdown/target switch alerts.
+  - Wave開始アナウンス
+  - 20秒警告
+  - オオモノ湧き予告（カウントダウン）
+  - EX Wave(Joe) カウントダウン/ターゲット切替
 
-## Environment Variables / HTTPS
+## 環境変数 / HTTPS
 
-`.env` and `.env.local`:
+`.env` / `.env.local`:
 
 ```env
 VITE_WS_SERVER=localhost:4649
@@ -79,24 +87,25 @@ SERVER_SSLCERT=.dev/ssl/localhost.crt
 SERVER_SSLKEY=.dev/ssl/localhost.key
 ```
 
-- Use `scripts/ssl_mac.sh` or `scripts/ssl_win.bat` to generate a local certificate with mkcert.
-- Start with HTTPS: `npm start -- --https`.
+- `scripts/ssl_mac.sh` / `scripts/ssl_win.bat` でローカル証明書を生成できます。
+- HTTPSで起動する場合:
+  - `npm start -- --https`
 
-## Localization
+## ローカライズ
 
-- Locale JSON files live in `public/locales/`.
-- Add a new locale entry in `Shake-Streamkit-NW/modules/core/utils/language.ts`.
+- 翻訳ファイル: `public/locales/`
+- 言語一覧: `Shake-Streamkit-NW/modules/core/utils/language.ts`
 
-## Tests
+## テスト
 
 ```bash
 npm test
 ```
 
-## License
+## ライセンス
 
-GPL-3.0-only. See `LICENSE`.
+GPL-3.0-only (`LICENSE` を参照)
 
-## Related
+## 関連
 
 - ShakeScouter: https://github.com/mntone/ShakeScouter
