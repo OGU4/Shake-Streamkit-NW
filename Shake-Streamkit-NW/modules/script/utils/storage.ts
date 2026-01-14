@@ -1,43 +1,61 @@
-import { defaultScriptStorage, type ScriptStorage, type ScriptStorageV2, type ScriptWaveId } from '../models/storage'
+import { defaultScriptStorage, type ScriptSet, type ScriptStorage, type ScriptStorageV3, type ScriptWaveId } from '../models/storage'
 
 export const SCRIPT_STORAGE_KEY = 'shake-streamkit-nw:script'
 
 const SCRIPT_WAVE_IDS: ScriptWaveId[] = ['Wave1', 'Wave2', 'Wave3', 'Wave4', 'Wave5']
+const SCRIPT_SET_COUNT = 5
 
-const normalizeScriptStorageV2 = (data: any): ScriptStorageV2 => {
-	const waves = SCRIPT_WAVE_IDS.reduce((draft, waveId) => {
-		const text = typeof data?.waves?.[waveId] === 'string'
-			? data.waves[waveId]
-			: ''
+const createEmptyWaves = (): Record<ScriptWaveId, string> => {
+	return SCRIPT_WAVE_IDS.reduce((draft, waveId) => {
+		draft[waveId] = ''
+		return draft
+	}, {} as Record<ScriptWaveId, string>)
+}
+
+const normalizeWaves = (data: any): Record<ScriptWaveId, string> => {
+	return SCRIPT_WAVE_IDS.reduce((draft, waveId) => {
+		const text = typeof data?.[waveId] === 'string' ? data[waveId] : ''
 		draft[waveId] = text
 		return draft
 	}, {} as Record<ScriptWaveId, string>)
+}
 
+const normalizeScriptSet = (data: any): ScriptSet => {
 	return {
-		version: 2,
-		enabled: data?.enabled === true,
-		volume: typeof data?.volume === 'number' ? Math.max(0, Math.min(1, data.volume)) : 1,
-		voice: typeof data?.voice === 'string' ? data.voice : undefined,
-		waves,
+		waves: normalizeWaves(data?.waves),
 	}
 }
 
-const migrate = (data: any): ScriptStorageV2 => {
-	if (data?.version === 2) {
-		return normalizeScriptStorageV2(data)
+const normalizeScriptStorageV3 = (data: any): ScriptStorageV3 => {
+	const index = typeof data?.activeSetIndex === 'number'
+		? Math.trunc(data.activeSetIndex)
+		: 0
+	const activeSetIndex = index >= 0 && index < SCRIPT_SET_COUNT ? index : 0
+
+	const rawSets = Array.isArray(data?.sets) ? data.sets : []
+	const sets = Array.from({ length: SCRIPT_SET_COUNT }, (_value, idx) => {
+		const rawSet = rawSets[idx]
+		return rawSet ? normalizeScriptSet(rawSet) : { waves: createEmptyWaves() }
+	})
+
+	return {
+		version: 3,
+		enabled: data?.enabled === true,
+		volume: typeof data?.volume === 'number' ? Math.max(0, Math.min(1, data.volume)) : 1,
+		voice: typeof data?.voice === 'string' ? data.voice : undefined,
+		activeSetIndex,
+		sets,
 	}
-	if (data?.version === 1) {
-		const next = normalizeScriptStorageV2({
-			...data,
-			volume: 1,
-			voice: undefined,
-		})
-		return next
+}
+
+const migrate = (data: any): ScriptStorageV3 => {
+	if (data?.version === 3) {
+		return normalizeScriptStorageV3(data)
 	}
 	return defaultScriptStorage
 }
 
-export const loadScriptStorage = (): ScriptStorageV2 => {
+export const loadScriptStorage = (): ScriptStorageV3 => {
 	if (typeof window === 'undefined') {
 		return defaultScriptStorage
 	}
@@ -55,7 +73,7 @@ export const loadScriptStorage = (): ScriptStorageV2 => {
 	}
 }
 
-export const saveScriptStorage = (storage: ScriptStorageV2): void => {
+export const saveScriptStorage = (storage: ScriptStorageV3): void => {
 	if (typeof window === 'undefined') {
 		return
 	}

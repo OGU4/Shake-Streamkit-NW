@@ -71,6 +71,11 @@
 	color: inherit;
 }
 
+.ScriptEditor-select option {
+	background-color: var(--ctl-bg);
+	color: var(--fg);
+}
+
 .ScriptEditor input[type='range'] {
 	appearance: none;
 	width: 100%;

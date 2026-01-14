@@ -97,7 +97,8 @@ const scriptSpeechMiddleware = (store: MiddlewareAPI<Dispatch, RootState>) => (n
 	}
 
 	const waveId = `Wave${waveData.wave}` as ScriptWaveId
-	const scriptText = state.script.waves[waveId] ?? ''
+	const activeSet = state.script.sets[state.script.activeSetIndex]
+	const scriptText = activeSet?.waves[waveId] ?? ''
 	const entries = parseScript(waveId, scriptText)
 
 	for (const entry of entries) {

@@ -21,6 +21,14 @@ const ScriptMessages = defineMessages({
 		id: 'Script.volume',
 		defaultMessage: 'Volume',
 	},
+	set: {
+		id: 'Script.set',
+		defaultMessage: 'Set',
+	},
+	setOption: {
+		id: 'Script.setOption',
+		defaultMessage: 'Set {set}',
+	},
 	voiceUnavailable: {
 		id: 'Script.voiceUnavailable',
 		defaultMessage: 'No Japanese voices available in this browser.',

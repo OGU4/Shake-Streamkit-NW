@@ -6,11 +6,12 @@ import { useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 
 import CheckBox from '@/core/components/CheckBox'
+import { Select, SelectItem } from '@/core/components/Select'
 
 import { useAppSelector } from 'app/hooks'
 
 import ScriptMessages from '../../messages'
-import { SCRIPT_WAVE_IDS, setScriptEnabled, setScriptVoice, setScriptVolume, setScriptWaveText } from '../../slicers'
+import { SCRIPT_WAVE_IDS, setActiveSetIndex, setScriptEnabled, setScriptVoice, setScriptVolume, setScriptWaveText } from '../../slicers'
 import type { ScriptWaveId } from '../../models/storage'
 import { speakText } from '../../utils/speech'
 
@@ -19,12 +20,14 @@ const ScriptEditor = () => {
 	const dispatch = useDispatch()
 
 	const enabled = useAppSelector(state => state.script.enabled)
-	const waves = useAppSelector(state => state.script.waves)
+	const activeSetIndex = useAppSelector(state => state.script.activeSetIndex)
+	const waves = useAppSelector(state => state.script.sets[state.script.activeSetIndex]?.waves)
 	const volume = useAppSelector(state => state.script.volume)
 	const selectedVoice = useAppSelector(state => state.script.voice)
 
 	const [currentWave, setCurrentWave] = useState<ScriptWaveId>(SCRIPT_WAVE_IDS[0])
 	const waveTabs = useMemo(() => SCRIPT_WAVE_IDS, [])
+	const setTabs = useMemo(() => Array.from({ length: 5 }, (_value, index) => index), [])
 	const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
 
 	const refreshVoices = useCallback(() => {
@@ -72,9 +75,19 @@ const ScriptEditor = () => {
 		}
 	}, [dispatch])
 
-	const handleVoiceChange = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
-		const value = event.target.value
-		dispatch(setScriptVoice(value === '' ? undefined : value))
+	const handleVoiceChange = useCallback((value: string) => {
+		if (value === 'default' || value === 'unavailable') {
+			dispatch(setScriptVoice(undefined))
+			return
+		}
+		dispatch(setScriptVoice(value))
+	}, [dispatch])
+
+	const handleSetChange = useCallback((value: string) => {
+		const next = Number.parseInt(value, 10)
+		if (!Number.isNaN(next)) {
+			dispatch(setActiveSetIndex(next))
+		}
 	}, [dispatch])
 
 	return (
@@ -101,6 +114,25 @@ const ScriptEditor = () => {
 			<div className='ScriptEditor-controls'>
 				<label className='ScriptEditor-control'>
 					<span className='ScriptEditor-label'>
+						{intl.formatMessage(ScriptMessages.set)}
+					</span>
+					<Select
+						placeholder={intl.formatMessage(ScriptMessages.set)}
+						value={String(activeSetIndex)}
+						onValueChange={handleSetChange}
+					>
+						{setTabs.map(index => (
+							<SelectItem key={index} value={String(index)}>
+								{intl.formatMessage(ScriptMessages.setOption, {
+									set: index + 1,
+								})}
+							</SelectItem>
+						))}
+					</Select>
+				</label>
+
+				<label className='ScriptEditor-control'>
+					<span className='ScriptEditor-label'>
 						{intl.formatMessage(ScriptMessages.volume)}
 					</span>
 					<input
@@ -117,23 +149,29 @@ const ScriptEditor = () => {
 					<span className='ScriptEditor-label'>
 						{intl.formatMessage(ScriptMessages.voice)}
 					</span>
-					<select
-						className='ScriptEditor-select'
-						value={selectedVoice ?? ''}
+					<Select
+						placeholder={intl.formatMessage(ScriptMessages.voice)}
+						value={voices.length === 0 ? 'unavailable' : (selectedVoice ?? 'default')}
 						disabled={voices.length === 0}
-						onChange={handleVoiceChange}
+						onValueChange={handleVoiceChange}
 					>
-						<option value=''>
-							{voices.length === 0
-								? intl.formatMessage(ScriptMessages.voiceUnavailable)
-								: intl.formatMessage(ScriptMessages.voiceDefault)}
-						</option>
-						{voices.map(voice => (
-							<option key={voice.voiceURI} value={voice.voiceURI}>
-								{voice.name} ({voice.lang})
-							</option>
-						))}
-					</select>
+						{voices.length === 0 ? (
+							<SelectItem value='unavailable'>
+								{intl.formatMessage(ScriptMessages.voiceUnavailable)}
+							</SelectItem>
+						) : (
+							<>
+								<SelectItem value='default'>
+									{intl.formatMessage(ScriptMessages.voiceDefault)}
+								</SelectItem>
+								{voices.map(voice => (
+									<SelectItem key={voice.voiceURI} value={voice.voiceURI}>
+										{voice.name} ({voice.lang})
+									</SelectItem>
+								))}
+							</>
+						)}
+					</Select>
 				</label>
 			</div>
 
@@ -164,7 +202,7 @@ const ScriptEditor = () => {
 					>
 						<textarea
 							className='ScriptEditor-textarea'
-							value={waves[waveId] ?? ''}
+							value={waves?.[waveId] ?? ''}
 							placeholder=''
 							disabled={!enabled}
 							onChange={handleTextChange(waveId)}
